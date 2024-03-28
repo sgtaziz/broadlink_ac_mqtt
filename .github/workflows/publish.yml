@@ -17,5 +17,4 @@ jobs:
       - name: Build and publish the Docker image
         run: |
               docker build . --tag ghcr.io/sgtaziz/broadlink_ac_mqtt:latest
-              docker run ghcr.io/sgtaziz/broadlink_ac_mqtt:latest
               docker push ghcr.io/sgtaziz/broadlink_ac_mqtt:latest
