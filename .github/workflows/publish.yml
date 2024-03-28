@@ -4,15 +4,17 @@ jobs:
   publish-broadlink_ac_mqtt-docker-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to GitHub Container Registry
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Build and publish the Docker image
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish the Docker image
         run: |
               docker build . --tag ghcr.io/sgtaziz/broadlink_ac_mqtt:latest
               docker run ghcr.io/sgtaziz/broadlink_ac_mqtt:latest
