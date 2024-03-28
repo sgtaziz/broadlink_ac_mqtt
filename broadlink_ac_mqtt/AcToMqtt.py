@@ -73,7 +73,7 @@ class AcToMqtt:
 			sys.exit()
 		
 		for device in device_list:			
-			device_objects[device['mac']] = broadlink.gendevice(devtype=0x4E2a, host=(device['ip'],device['port']),mac = bytearray.fromhex(device['mac']), name=device['name'],update_interval = self.config['update_interval'])		
+			device_objects[device['mac']] = broadlink.gendevice(devtype=0x4E2a, host=(device['ip'],device['port']),mac = bytearray.fromhex(device['mac']), name=device['name'],update_interval = self.config['update_interval'], heat=device['heat'])		
 			
 		return device_objects
 
@@ -185,8 +185,8 @@ class AcToMqtt:
 				,"fan_mode_state_topic" : self.config["mqtt_topic_prefix"]  + device.status["macaddress"]+"/fanspeed_homeassistant/value"
 				,"swing_mode_state_topic" : self.config["mqtt_topic_prefix"]  + device.status["macaddress"]+"/fixation_v/value"
 				,"fan_modes": ["Auto","Low","Medium", "High","Turbo","Mute"]
-				,"modes": ["off","cool","heat","fan_only","dry"]
-				,"swing_modes": ["TOP", "MIDDLE1", "MIDDLE2", "MIDDLE3", "BOTTOM", "SWING",  "AUTO"]
+				,"modes": device.heat and ["off","cool","heat","fan_only","dry"] or ["off","cool","fan_only","dry"]
+				,"swing_modes": ["Top", "Top Middle", "Middle", "Bottom Middle", "Bottom", "Vertical Swing", "Horizontal Swing", "Horizontal Fixed"]
 				,"max_temp":32.0
 				,"min_temp":16.0
 				,"precision": 0.5

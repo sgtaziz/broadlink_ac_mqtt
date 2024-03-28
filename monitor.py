@@ -261,7 +261,7 @@ def start():
 		# 	config_file_path = data_dir+'\\settings\\config.yml'
 		else:
 			# config_file_path = data_dir+'/config.yml'
-			config_file_path = data_dir+'\\settings\config.yml'
+			config_file_path = data_dir+'/settings/config.yml'
 		
 	
 	##LogFile

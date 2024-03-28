@@ -15,7 +15,7 @@ import struct
 
 version = "1.1.3"
 
-def gendevice(devtype , host, mac,name=None, cloud=None,update_interval = 0):
+def gendevice(devtype , host, mac,name=None, cloud=None,update_interval = 0,heat = False):
 	#print format(devtype,'02x')
 	##We only care about 1 device type...  
 	if devtype == 0x4E2a: # Danham Bush
@@ -23,7 +23,7 @@ def gendevice(devtype , host, mac,name=None, cloud=None,update_interval = 0):
 	if devtype == 0xFFFFFFF: # test
 		return ac_db_debug(host=host, mac=mac,name=name, cloud=cloud,devtype= devtype,update_interval = 0)
 	else:
-		return device(host=host, mac=mac,devtype =devtype,update_interval = update_interval)
+		return device(host=host, mac=mac,devtype =devtype,update_interval = update_interval,heat = heat)
 
 
 def discover(timeout=None, bind_to_ip=None):
@@ -131,7 +131,7 @@ class device:
 	__INIT_KEY = "097628343fe99e23765c1513accf8b02"
 	__INIT_VECT = "562e17996d093d28ddb3ba695a2e6f58"
 		
-	def __init__(self, host, mac, timeout=10,name=None,cloud=None,devtype=None,update_interval=0,bind_to_ip=None):
+	def __init__(self, host, mac, timeout=10,name=None,cloud=None,devtype=None,update_interval=0,bind_to_ip=None,heat=False):
 
 		
 		self.host = host
@@ -140,6 +140,7 @@ class device:
 		self.cloud = cloud
 		self.timeout = timeout
 		self.devtype = devtype
+		self.heat = heat
 		self.count = random.randrange(0xffff)
 		##AES
 		self.key = bytearray([0x09, 0x76, 0x28, 0x34, 0x3f, 0xe9, 0x9e, 0x23, 0x76, 0x5c, 0x15, 0x13, 0xac, 0xcf, 0x8b, 0x02])
@@ -517,7 +518,21 @@ class ac_db(device):
 		##Make sure latest info as cannot just update one things, have set all
 		self.get_ac_states()
 		
-		fixation = self.STATIC.FIXATION.VERTICAL.__dict__.get(fixation_text.upper())
+		if fixation_text.lower() == 'top middle':
+			fixation = self.STATIC.FIXATION.VERTICAL.MIDDLE1
+		elif fixation_text.lower() == 'middle':
+			fixation = self.STATIC.FIXATION.VERTICAL.MIDDLE2
+		elif fixation_text.lower() == 'bottom middle':
+			fixation = self.STATIC.FIXATION.VERTICAL.MIDDLE3
+		elif fixation_text.lower() == 'vertical swing':
+			fixation = self.STATIC.FIXATION.VERTICAL.SWING
+		elif fixation_text.lower() == 'horizontal swing':
+			return self.set_fixation_h("ON")
+		elif fixation_text.lower() == 'horizontal fixed':
+			return self.set_fixation_h("OFF")
+		else:
+			fixation = self.STATIC.FIXATION.VERTICAL.__dict__.get(fixation_text.upper())
+   
 		if fixation != None:
 			self.status['fixation_v'] = fixation
 			self.set_ac_status()
@@ -848,6 +863,23 @@ class ac_db(device):
 			status_nice['mode_homeassistant'] = "fan_only"
 		else:
 			status_nice['mode_homeassistant'] = "Error"
+
+		if self.status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.TOP:
+			status_nice['fixation_v'] = "Top"		
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.MIDDLE1:
+			status_nice['fixation_v'] = "Top Middle"		
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.MIDDLE2:
+			status_nice['fixation_v'] = "Middle"
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.MIDDLE3:
+			status_nice['fixation_v'] = "Bottom Middle"
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.BOTTOM:
+			status_nice['fixation_v'] = "Bottom"
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.SWING:
+			status_nice['fixation_v'] = "Swing"
+		elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.AUTO:
+			status_nice['fixation_v'] = "Auto"
+		else:
+			status_nice['swing'] = "Error"
 		 
 		##Make fanspeed logic
 		status_nice['fanspeed']  = self.get_key(self.STATIC.FAN.__dict__,status['fanspeed'])
