@@ -189,7 +189,7 @@ class AcToMqtt:
 				,"swing_modes": ["Top", "Top Middle", "Middle", "Bottom Middle", "Bottom", "Vertical Swing", "Horizontal Swing", "Horizontal Fixed"]
 				,"max_temp":32.0
 				,"min_temp":16.0
-				,"precision": 0.5
+				,"precision": 0.1
 				,"temp_step": 0.5 ## @Anonym-tsk
 				,"unique_id": device.status["macaddress"]
 				,"device" : {"ids":device.status["macaddress"],"name":str(name.decode("utf-8")),"model":'Aircon',"mf":"Broadlink","sw":broadlink.version}				
