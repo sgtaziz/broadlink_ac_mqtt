@@ -337,7 +337,9 @@ class AcToMqtt:
 		except Exception as e:	
 			logger.critical(e)			
 			return
-			
+		
+		if not hasattr(self, 'device_objects'):
+			return
 		
 		##Process received		##Probably need to exit here as well if command not send, but should exit on status update above .. grr, hate stupid python
 		if function ==  "temp":	
