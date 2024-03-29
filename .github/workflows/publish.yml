@@ -1,11 +1,19 @@
 name: publish
+
 on: [push]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   publish-broadlink_ac_mqtt-docker-image:
     runs-on: ubuntu-latest
+    
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
