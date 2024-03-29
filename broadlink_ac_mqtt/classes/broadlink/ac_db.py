@@ -17,13 +17,13 @@ version = "1.1.3"
 
 def gendevice(devtype , host, mac,name=None, cloud=None,update_interval = 0,heat = False):
 	#print format(devtype,'02x')
-	##We only care about 1 device type...  
+	##We only care about 1 device type... 
 	if devtype == 0x4E2a: # Danham Bush
-		return ac_db(host=host, mac=mac,name=name, cloud=cloud,devtype= devtype,update_interval = 0)
+		return ac_db(host=host, mac=mac,name=name, cloud=cloud,devtype= devtype,update_interval = 0, heat=heat)
 	if devtype == 0xFFFFFFF: # test
-		return ac_db_debug(host=host, mac=mac,name=name, cloud=cloud,devtype= devtype,update_interval = 0)
+		return ac_db_debug(host=host, mac=mac,name=name, cloud=cloud,devtype= devtype,update_interval = 0, heat=heat)
 	else:
-		return device(host=host, mac=mac,devtype =devtype,update_interval = update_interval,heat = heat)
+		return device(host=host, mac=mac, devtype=devtype, update_interval=update_interval, heat=heat)
 
 
 def discover(timeout=None, bind_to_ip=None):
@@ -133,7 +133,6 @@ class device:
 		
 	def __init__(self, host, mac, timeout=10,name=None,cloud=None,devtype=None,update_interval=0,bind_to_ip=None,heat=False):
 
-		
 		self.host = host
 		self.mac = mac
 		self.name = name    
@@ -357,9 +356,9 @@ class ac_db(device):
 		return status
 	
  
-	def __init__ (self, host, mac,name=None,cloud=None,debug = False,update_interval = 0,devtype=None,bind_to_ip=None):			
-		
-		device.__init__(self, host, mac,name=name,cloud=cloud,devtype=devtype,update_interval=update_interval)	
+	def __init__ (self, host, mac,name=None,cloud=None,debug = False,update_interval = 0,devtype=None,bind_to_ip=None, heat=False):			
+
+		device.__init__(self, host, mac,name=name,cloud=cloud,devtype=devtype,update_interval=update_interval, heat=heat)	
 		
 		devtype = devtype
 		self.status = {}		
@@ -1028,8 +1027,8 @@ class ac_db_debug(device):
 	
 	type = "ac_db"
 
-	def __init__ (self, host, mac,name=None,cloud=None,debug = False,update_interval = 0,devtype=None,auth=False):			
-		device.__init__(self, host, mac,name=name,cloud=cloud,devtype=devtype,update_interval=update_interval)	
+	def __init__ (self, host, mac,name=None,cloud=None,debug = False,update_interval = 0,devtype=None,auth=False, heat=False):			
+		device.__init__(self, host, mac,name=name,cloud=cloud,devtype=devtype,update_interval=update_interval, heat=heat)	
 		
 		devtype = devtype
 		self.status = {}		
