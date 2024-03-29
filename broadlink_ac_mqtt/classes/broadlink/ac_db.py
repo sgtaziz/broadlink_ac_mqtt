@@ -1330,8 +1330,14 @@ class ac_db_debug(device):
 				except socket.timeout:
 					if (time.time() - starttime) < self.timeout:
 						pass
-					#print "timedout"
-					raise ConnectTimeout(200,self.host)
+					# print "timedout"
+					response = [0x00,0x00,0x00,0x00,0x00,
+                 				0x00,0x00,0x00,0x00,0x00,
+                     			0x00,0x00,0x00,0x00,0x00,
+                        		0x00,0x00,0x00,0x00,0x00,
+                          		0x00,0x00,0x01,0x00,0x00]
+					break
+					# raise ConnectTimeout(200,self.host)
 		return bytearray(response[0])	
 
 	def auth(self):
