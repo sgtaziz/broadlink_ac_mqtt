@@ -205,26 +205,29 @@ class device:
         payload[0x36] = ord('1')
 
     
-        response = self.send_packet(0x65, payload)    
-
-        enc_payload = response[0x38:]
-
+        response = self.send_packet(0x65, payload)
         
-        payload = self.decrypt(bytes(enc_payload))
+        err = response[0x22] | (response[0x23] << 8)
+        if err == 0:
+            enc_payload = response[0x38:]
+
+            payload = self.decrypt(bytes(enc_payload))
+            
+            if not payload:
+                return False
+
+            key = payload[0x04:0x14]
+            if len(key) % 16 != 0:
+                return False
+
+            self.id = payload[0x00:0x04]
+            self.key = key
+
+            self.update_aes(payload[0x04:0x14])
+
+            return True
         
-        if not payload:
-            return False
-
-        key = payload[0x04:0x14]
-        if len(key) % 16 != 0:
-            return False
-
-        self.id = payload[0x00:0x04]
-        self.key = key
-
-        self.update_aes(payload[0x04:0x14])
-
-        return True
+        return False
 
     def get_type(self):
         return self.type
@@ -292,19 +295,17 @@ class device:
                     if (time.time() - starttime) < self.timeout:
                         pass
                     # print "timedout"
-                    response = [[0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x01,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00,
-                                0x00,0x00,0x00,0x00,0x00]]
+                    response = [[0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x01,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00,
+                                 0x00,0x00,0x00,0x00,0x00,0x00]]
                     break
                     # raise ConnectTimeout(200,self.host)
         return bytearray(response[0])
@@ -1008,7 +1009,7 @@ class ac_db(device):
         self.logger.debug ("Packet:"+ ''.join(format(x, '02x') for x in request_payload))
         
         response = self.send_packet(0x6a, request_payload)
-        self.logger.debug ("Resposnse:" + ''.join(format(x, '02x') for x in response))
+        # self.logger.debug ("Resposnse:" + ''.join(format(x, '02x') for x in response))
 
         err = response[0x22] | (response[0x23] << 8)
         if err == 0:
@@ -1250,7 +1251,7 @@ class ac_db_debug(device):
         #print ("Packet:"+ ''.join(format(x, '02x') for x in request_payload))
         
         response = self.send_packet(0x6a, request_payload)
-        self.logger.debug ("Resposnse:" + ''.join(format(x, '02x') for x in response))
+        # self.logger.debug ("Resposnse:" + ''.join(format(x, '02x') for x in response))
 
         err = response[0x22] | (response[0x23] << 8)
         if err == 0:
@@ -1391,20 +1392,23 @@ class ac_db_debug(device):
         payload[0x36] = ord('1')
 
     
-        response = self.send_packet(0x65, payload)    
-
-        enc_payload = response[0x38:]
-
+        response = self.send_packet(0x65, payload)
         
-        payload = self.decrypt(bytes(enc_payload))
+        err = response[0x22] | (response[0x23] << 8)
+        if err == 0:
+            enc_payload = response[0x38:]
+
+            payload = self.decrypt(bytes(enc_payload))
+            
+            if not payload:
+                return False
+
+            key = payload[0x04:0x14]
+            if len(key) % 16 != 0:
+                return False
+
+            self.id = payload[0x00:0x04]
+            self.key = key
+            return True
         
-        if not payload:
-            return False
-
-        key = payload[0x04:0x14]
-        if len(key) % 16 != 0:
-            return False
-
-        self.id = payload[0x00:0x04]
-        self.key = key
-        return True
+        return False
