@@ -541,6 +541,8 @@ class ac_db(device):
             fixation = self.STATIC.FIXATION.VERTICAL.MIDDLE3
         elif fixation_text.lower() == 'vertical swing':
             fixation = self.STATIC.FIXATION.VERTICAL.SWING
+        elif fixation_text.lower() == 'auto':
+            fixation = self.STATIC.FIXATION.VERTICAL.AUTO
         elif fixation_text.lower() == 'horizontal swing':
             return self.set_fixation_h("ON")
         elif fixation_text.lower() == 'horizontal fixed':
@@ -892,7 +894,7 @@ class ac_db(device):
         elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.BOTTOM:
             status_nice['fixation_v'] = "Bottom"
         elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.SWING:
-            status_nice['fixation_v'] = "Swing"
+            status_nice['fixation_v'] = "Vertical Swing"
         elif status['fixation_v'] == self.STATIC.FIXATION.VERTICAL.AUTO:
             status_nice['fixation_v'] = "Auto"
         else:
