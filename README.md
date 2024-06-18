@@ -53,6 +53,7 @@ devices:
   mac: b4430da741af
   name: Office
   port: 80
+  heat: yes
 
 *********** stop copy above ************
 
@@ -89,7 +90,7 @@ optional arguments:
   -dir DATA_DIR, --data_dir DATA_DIR
                         Data Folder -- Default to folder script is located
   -c CONFIG, --config CONFIG
-                        Config file path -- Default to folder script is located + 'config.yml'
+                        Config file path -- Default to folder script is located + '/settings/config.yml'
 
   
 
