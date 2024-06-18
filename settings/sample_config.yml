@@ -21,7 +21,9 @@ devices:
   mac: b4222dce73f1
   name: Living Room
   port: 80
+  heat: yes
 - ip: 10.2.0.227
   mac: b4222da741af
   name: Office
   port: 80
+  heat: no
